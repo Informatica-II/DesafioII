@@ -4,4 +4,10 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-        main.cpp
+        gestoramistades.cpp \
+        main.cpp \
+        plataforma.cpp
+
+HEADERS += \
+    gestoramistades.h \
+    plataforma.h
