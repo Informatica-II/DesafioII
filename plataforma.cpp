@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include "GestorAmistades.h"
+#include "gestormensajes.h"
 
 using namespace std;
 
@@ -158,6 +159,9 @@ void Plataforma::menuInterno() {
     int iteracionesGlobales = 0;
     int memoriaGlobal = 0;
 
+    GestorAmistades gestorAmigos;
+    GestorMensajes gestorMensajes;
+
     do {
         cout << "\n===============================" << endl;
         cout << "      Menu de opciones      " << endl;
@@ -173,17 +177,17 @@ void Plataforma::menuInterno() {
         cin.ignore();
 
         switch (opcion) {
-            case 1: {
+            case 1:
                 cout << "\nEntrando a Gestor de Amistades..." << endl;
-                GestorAmistades gestorAmigos;
                 gestorAmigos.administrar(usuarioActivo, iteracionesGlobales, memoriaGlobal);
                 break;
-            }
+
             case 2:
                 cout << "\nEntrando a Gestor de Albumes..." << endl;
                 break;
             case 3:
                 cout << "\nEntrando a Gestor de Mensajes..." << endl;
+                gestorMensajes.administrar(string(usuarioActivo), gestorAmigos, iteracionesGlobales, memoriaGlobal);
                 break;
             case 4:
                 cout << "\nCerrando sesion..." << endl;

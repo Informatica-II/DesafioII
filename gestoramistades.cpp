@@ -45,11 +45,31 @@ bool GestorAmistades::sonAmigos(const char* usuario1, const char* usuario2, int&
         return false;
     }
 
-    char linea[250];
     bool amigos = false;
+    int capacidad = 50;
+    char* linea = new char[capacidad];
+    char letra;
+    int pos = 0;
+    bool continuar = true;
 
-    while (archivo.getline(linea, 250)) {
-        iteraciones++;
+    while (continuar) {
+        if (archivo.get(letra)) {
+            iteraciones++;
+            if (letra == '\r') continue;
+            if (letra != '\n') {
+                if (pos >= capacidad - 1) {
+                    redimensionarLinea(linea, capacidad, iteraciones);
+                }
+                linea[pos++] = letra;
+                continue;
+            }
+        }
+        else {
+            continuar = false;
+            if (pos == 0) break;
+        }
+        linea[pos] = '\0';
+
         char duenio[25] = {0};
         int i = 0;
         int posDuenio = 0;
@@ -104,8 +124,12 @@ bool GestorAmistades::sonAmigos(const char* usuario1, const char* usuario2, int&
             }
             if (matchFinal && amigo[0] != '\0') amigos = true;
         }
+
+        pos = 0;
         if (amigos) break;
     }
+
+    delete[] linea;
     archivo.close();
     return amigos;
 }
@@ -116,11 +140,32 @@ bool GestorAmistades::existeSolicitud(const char* emisor, const char* receptor, 
         cout << "Error: No se encontro usuarios.txt" << endl;
         return false;
     }
-    char linea[250];
-    bool existe = false;
 
-    while (archivo.getline(linea, 250)) {
-        iteraciones++;
+    bool existe = false;
+    int capacidad = 50;
+    char* linea = new char[capacidad];
+    char letra;
+    int pos = 0;
+    bool continuar = true;
+
+    while (continuar) {
+        if (archivo.get(letra)) {
+            iteraciones++;
+            if (letra == '\r') continue;
+            if (letra != '\n') {
+                if (pos >= capacidad - 1) {
+                    redimensionarLinea(linea, capacidad, iteraciones);
+                }
+                linea[pos++] = letra;
+                continue;
+            }
+        }
+        else {
+            continuar = false;
+            if (pos == 0) break;
+        }
+        linea[pos] = '\0';
+
         char duenio[25] = {0};
         int i = 0;
         int posDuenio = 0;
@@ -174,8 +219,12 @@ bool GestorAmistades::existeSolicitud(const char* emisor, const char* receptor, 
             }
             if (matchFinal && sol[0] != '\0') existe = true;
         }
+
+        pos = 0;
         if (existe) break;
     }
+
+    delete[] linea;
     archivo.close();
     return existe;
 }
@@ -183,13 +232,33 @@ bool GestorAmistades::existeSolicitud(const char* emisor, const char* receptor, 
 void GestorAmistades::guardarElemento(const char* nombreArchivo, const char* duenio, const char* elemento, int& iteraciones) {
     ifstream archivoLeido(nombreArchivo);
     ofstream archivoTemp("temp.txt");
-
     bool duenioEncontrado = false;
-    char linea[250];
 
     if (archivoLeido.is_open()) {
-        while (archivoLeido.getline(linea, 250)) {
-            iteraciones++;
+        int capacidad = 50;
+        char* linea = new char[capacidad];
+        char letra;
+        int pos = 0;
+        bool continuar = true;
+
+        while (continuar) {
+            if (archivoLeido.get(letra)) {
+                iteraciones++;
+                if (letra == '\r') continue;
+                if (letra != '\n') {
+                    if (pos >= capacidad - 1) {
+                        redimensionarLinea(linea, capacidad, iteraciones);
+                    }
+                    linea[pos++] = letra;
+                    continue;
+                }
+            }
+            else {
+                continuar = false;
+                if (pos == 0) break;
+            }
+            linea[pos] = '\0';
+
             char d[25] = {0};
             int i = 0, posD = 0;
 
@@ -216,11 +285,14 @@ void GestorAmistades::guardarElemento(const char* nombreArchivo, const char* due
 
                 if (j > i + 1) archivoTemp << '/';
                 archivoTemp << elemento << "\n";
-
-            } else {
+            }
+            else {
                 archivoTemp << linea << "\n";
             }
+
+            pos = 0;
         }
+        delete[] linea;
         archivoLeido.close();
     }
 
@@ -233,10 +305,34 @@ void GestorAmistades::guardarElemento(const char* nombreArchivo, const char* due
     ofstream escribirOriginal(nombreArchivo);
 
     if (leerTemp.is_open()) {
-        while (leerTemp.getline(linea, 250)) {
-            iteraciones++;
+        int capacidad = 50;
+        char* linea = new char[capacidad];
+        char letra;
+        int pos = 0;
+        bool continuar = true;
+
+        while (continuar) {
+            if (leerTemp.get(letra)) {
+                iteraciones++;
+                if (letra == '\r') continue;
+                if (letra != '\n') {
+                    if (pos >= capacidad - 1) {
+                        redimensionarLinea(linea, capacidad, iteraciones);
+                    }
+                    linea[pos++] = letra;
+                    continue;
+                }
+            }
+            else {
+                continuar = false;
+                if (pos == 0) break;
+            }
+            linea[pos] = '\0';
+
             escribirOriginal << linea << "\n";
+            pos = 0;
         }
+        delete[] linea;
         leerTemp.close();
         escribirOriginal.close();
     }
@@ -245,13 +341,32 @@ void GestorAmistades::guardarElemento(const char* nombreArchivo, const char* due
 void GestorAmistades::eliminarSolicitudPendiente(const char* emisor, const char* receptor, int& iteraciones) {
     ifstream archivoLeido("solicitudes.txt");
     ofstream archivoTemp("temp.txt");
-
     if (!archivoLeido.is_open()) return;
 
-    char linea[250];
+    int capacidad = 50;
+    char* linea = new char[capacidad];
+    char letra;
+    int pos = 0;
+    bool continuar = true;
 
-    while (archivoLeido.getline(linea, 250)) {
-        iteraciones++;
+    while (continuar) {
+        if (archivoLeido.get(letra)) {
+            iteraciones++;
+            if (letra == '\r') continue;
+            if (letra != '\n') {
+                if (pos >= capacidad - 1) {
+                    redimensionarLinea(linea, capacidad, iteraciones);
+                }
+                linea[pos++] = letra;
+                continue;
+            }
+        }
+        else {
+            continuar = false;
+            if (pos == 0) break;
+        }
+        linea[pos] = '\0';
+
         char duenio[25] = {0};
         int i = 0, posDuenio = 0;
 
@@ -317,7 +432,10 @@ void GestorAmistades::eliminarSolicitudPendiente(const char* emisor, const char*
         else {
             archivoTemp << linea << "\n";
         }
+
+        pos = 0;
     }
+    delete[] linea;
     archivoLeido.close();
     archivoTemp.close();
 
@@ -325,21 +443,45 @@ void GestorAmistades::eliminarSolicitudPendiente(const char* emisor, const char*
     ofstream escribirOriginal("solicitudes.txt");
 
     if (leerTemp.is_open()) {
-        while (leerTemp.getline(linea, 250)) {
-            iteraciones++;
+        capacidad = 50;
+        char* lineaFase2 = new char[capacidad];
+        pos = 0;
+        continuar = true;
+
+        while (continuar) {
+            if (leerTemp.get(letra)) {
+                iteraciones++;
+                if (letra == '\r') continue;
+                if (letra != '\n') {
+                    if (pos >= capacidad - 1) {
+                        redimensionarLinea(lineaFase2, capacidad, iteraciones);
+                    }
+                    lineaFase2[pos++] = letra;
+                    continue;
+                }
+            }
+            else {
+                continuar = false;
+                if (pos == 0) break;
+            }
+            lineaFase2[pos] = '\0';
+
             bool estaVacia = true;
-            for (int k = 0; linea[k] != '\0'; k++) {
-                if (linea[k] == '|') {
-                    if (linea[k+1] != '\0' && linea[k+1] != '\r' && linea[k+1] != '\n') {
+            for (int k = 0; lineaFase2[k] != '\0'; k++) {
+                if (lineaFase2[k] == '|') {
+                    if (lineaFase2[k+1] != '\0') {
                         estaVacia = false;
                     }
                     break;
                 }
             }
             if (!estaVacia) {
-                escribirOriginal << linea << "\n";
+                escribirOriginal << lineaFase2 << "\n";
             }
+
+            pos = 0;
         }
+        delete[] lineaFase2;
         leerTemp.close();
         escribirOriginal.close();
     }
@@ -395,10 +537,31 @@ void GestorAmistades::administrar(const char* usuarioActivo, int& iteracionesGlo
 
             char listaSolicitudes[50][25];
             int totalSol = 0;
-            char linea[250];
 
-            while (archivo.getline(linea, 250)) {
-                iteraciones++;
+            int capacidad = 50;
+            char* linea = new char[capacidad];
+            char letra;
+            int pos = 0;
+            bool continuar = true;
+
+            while (continuar) {
+                if (archivo.get(letra)) {
+                    iteraciones++;
+                    if (letra == '\r') continue;
+                    if (letra != '\n') {
+                        if (pos >= capacidad - 1) {
+                            redimensionarLinea(linea, capacidad, iteraciones);
+                        }
+                        linea[pos++] = letra;
+                        continue;
+                    }
+                }
+                else {
+                    continuar = false;
+                    if (pos == 0) break;
+                }
+                linea[pos] = '\0';
+
                 char duenio[25] = {0};
                 int i = 0, posD = 0;
 
@@ -422,7 +585,6 @@ void GestorAmistades::administrar(const char* usuarioActivo, int& iteracionesGlo
                     while (linea[i] != '\0') {
                         if (linea[i] == '/' || linea[i] == '\r') {
                             sol[posSol] = '\0';
-
                             if (sol[0] != '\0' && totalSol < 50) {
                                 for (int m = 0; m <= posSol; m++) {
                                     listaSolicitudes[totalSol][m] = sol[m];
@@ -430,7 +592,8 @@ void GestorAmistades::administrar(const char* usuarioActivo, int& iteracionesGlo
                                 totalSol++;
                             }
                             posSol = 0;
-                        } else if (posSol < 24) {
+                        }
+                        else if (posSol < 24) {
                             sol[posSol++] = linea[i];
                         }
                         i++;
@@ -445,12 +608,16 @@ void GestorAmistades::administrar(const char* usuarioActivo, int& iteracionesGlo
                     }
                     break;
                 }
+                pos = 0;
             }
+
+            delete[] linea;
             archivo.close();
 
             if (totalSol == 0) {
                 cout << "No tienes solicitudes pendientes." << endl;
-            } else {
+            }
+            else {
                 for (int i = 0; i < totalSol; i++) {
                     cout << i + 1 << ". " << listaSolicitudes[i] << endl;
                 }
@@ -483,4 +650,18 @@ void GestorAmistades::administrar(const char* usuarioActivo, int& iteracionesGlo
         iteracionesGlobales += iteraciones;
         memoriaGlobal += memoria;
     } while (opcion != 3);
+}
+
+void GestorAmistades::redimensionarLinea(char*& buffer, int& capacidadActual, int& iteraciones) {
+    int nuevaCapacidad = capacidadActual * 2;
+    char* nuevoBuffer = new char[nuevaCapacidad];
+
+    for (int i = 0; i < capacidadActual; i++) {
+        iteraciones++;
+        nuevoBuffer[i] = buffer[i];
+    }
+
+    delete[] buffer;
+    buffer = nuevoBuffer;
+    capacidadActual = nuevaCapacidad;
 }
