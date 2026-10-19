@@ -1,0 +1,4 @@
+juan|maria/alex/pedro
+maria|juan/pedro
+pedro|maria/juan/alex
+alex|juan/pedro

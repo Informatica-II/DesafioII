@@ -1,0 +1,4 @@
+juan|1234
+maria|abcd
+pedro|admin
+alex|contra
