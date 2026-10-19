@@ -541,7 +541,7 @@ void GestorAmistades::administrar(const char* usuarioActivo, int& iteracionesGlo
                 break;
             }
 
-            char listaSolicitudes[50][25];
+            char listaSolicitudes[1000][25];
             int totalSol = 0;
 
             int capacidad = 50;
@@ -1277,6 +1277,26 @@ void GestorAmistades::mostrarRuletaFotos(const string& usuarioActivo, int& itera
                     iteraciones++;
                 }
                 if (amigo != "") {
+                    if (numMisAmigos >= maxAmigos) {
+                        int nuevoMax = maxAmigos * 2;
+                        string* tempAmigos = new string[nuevoMax];
+                        int* tempComunes = new int[nuevoMax];
+                        memoria += (sizeof(string) * nuevoMax) + (sizeof(int) * nuevoMax);
+
+                        for (int k = 0; k < numMisAmigos; k++) {
+                            tempAmigos[k] = misAmigos[k];
+                            tempComunes[k] = comunes[k];
+                            iteraciones++;
+                        }
+
+                        delete[] misAmigos;
+                        delete[] comunes;
+                        misAmigos = tempAmigos;
+                        comunes = tempComunes;
+                        maxAmigos = nuevoMax;
+                    }
+                    // ------------------------------------------
+
                     misAmigos[numMisAmigos] = amigo;
                     comunes[numMisAmigos] = 0;
                     numMisAmigos++;
