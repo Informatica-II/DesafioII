@@ -493,8 +493,8 @@ void GestorAmistades::administrar(const char* usuarioActivo, int& iteracionesGlo
         cout << "\n===============================" << endl;
         cout << "      Gestor de Amistades      " << endl;
         cout << "===============================" << endl;
-        cout << "1. Ver solicitudes pendientes" << endl;
-        cout << "2. Enviar solicitud directa" << endl;
+        cout << "1. Enviar solicitud directa" << endl;
+        cout << "2. Ver solicitudes pendientes" << endl;
         cout << "3. Ver sugerencias de amistad" << endl;
         cout << "4. Visitar perfil de un amigo" << endl;
         cout << "5. Volver al menu principal" << endl;
@@ -699,25 +699,19 @@ void GestorAmistades::redimensionarLinea(char*& buffer, int& capacidadActual, in
 
 void GestorAmistades::sugerirAmigos(const string &usuarioActivo, int k, int &iteraciones, int &memoria)
 {
-    int totalUsuarios = 0;
-    ifstream archivo("amigos.txt");
-    string linea;
-    while (getline(archivo, linea)) {
-        totalUsuarios++;
-        iteraciones++;
-    }
-    archivo.close();
+    int maxAmigos = 10;
+    int maxCandidatos = 10;
 
-    if (totalUsuarios == 0) return;
-
-    string* misAmigos = new string[totalUsuarios];
-    string* candidatos = new string[totalUsuarios];
-    int* comunes = new int[totalUsuarios];
+    string* misAmigos = new string[maxAmigos];
+    string* candidatos = new string[maxCandidatos];
+    int* comunes = new int[maxCandidatos];
 
     int numMisAmigos = 0, numCandidatos = 0;
-    memoria += (sizeof(string) * totalUsuarios * 2) + (sizeof(int) * totalUsuarios);
+    memoria += (sizeof(string) * maxAmigos) + (sizeof(string) * maxCandidatos) + (sizeof(int) * maxCandidatos);
 
-    archivo.open("amigos.txt");
+    ifstream archivo("amigos.txt");
+    string linea;
+
     while (getline(archivo, linea)) {
         iteraciones++;
         memoria += linea.length();
@@ -738,6 +732,19 @@ void GestorAmistades::sugerirAmigos(const string &usuarioActivo, int k, int &ite
                     amigo += linea[i++];
                 }
                 if (amigo != "") {
+                    if (numMisAmigos >= maxAmigos) {
+                        int nuevoMax = maxAmigos * 2;
+                        string* temp = new string[nuevoMax];
+                        memoria += sizeof(string) * nuevoMax;
+                        for (int m = 0; m < numMisAmigos; m++) {
+                            temp[m] = misAmigos[m];
+                            iteraciones++;
+                        }
+                        delete[] misAmigos;
+                        misAmigos = temp;
+                        maxAmigos = nuevoMax;
+                    }
+
                     misAmigos[numMisAmigos++] = amigo;
                     memoria += amigo.length();
                 }
@@ -747,6 +754,14 @@ void GestorAmistades::sugerirAmigos(const string &usuarioActivo, int k, int &ite
         }
     }
     archivo.close();
+
+    if (numMisAmigos == 0) {
+        cout << "No tienes amigos para generar sugerencias." << endl;
+        delete[] misAmigos;
+        delete[] candidatos;
+        delete[] comunes;
+        return;
+    }
 
     archivo.open("amigos.txt");
     while (getline(archivo, linea)) {
@@ -779,7 +794,6 @@ void GestorAmistades::sugerirAmigos(const string &usuarioActivo, int k, int &ite
                     }
 
                     if (amigoDeAmigo != "" && amigoDeAmigo != usuarioActivo) {
-
                         bool yaEsMiAmigo = false;
                         for (int m = 0; m < numMisAmigos; m++) {
                             iteraciones++;
@@ -801,6 +815,25 @@ void GestorAmistades::sugerirAmigos(const string &usuarioActivo, int k, int &ite
                             }
 
                             if (!yaEstaEnCandidatos) {
+                                if (numCandidatos >= maxCandidatos) {
+                                    int nuevoMax = maxCandidatos * 2;
+                                    string* tempCandidatos = new string[nuevoMax];
+                                    int* tempComunes = new int[nuevoMax];
+                                    memoria += (sizeof(string) * nuevoMax) + (sizeof(int) * nuevoMax);
+
+                                    for (int c = 0; c < numCandidatos; c++) {
+                                        tempCandidatos[c] = candidatos[c];
+                                        tempComunes[c] = comunes[c];
+                                        iteraciones++;
+                                    }
+
+                                    delete[] candidatos;
+                                    delete[] comunes;
+                                    candidatos = tempCandidatos;
+                                    comunes = tempComunes;
+                                    maxCandidatos = nuevoMax;
+                                }
+
                                 candidatos[numCandidatos] = amigoDeAmigo;
                                 comunes[numCandidatos] = 1;
                                 numCandidatos++;
@@ -841,10 +874,52 @@ void GestorAmistades::sugerirAmigos(const string &usuarioActivo, int k, int &ite
 
         if (seleccion > 0 && seleccion <= mostrados) {
             string destino = candidatos[seleccion - 1];
-            ofstream archSol("solicitudes.txt", ios::app);
-            archSol << usuarioActivo << "|" << destino << "\n";
-            archSol.close();
-            cout << "Solicitud de amistad enviada a " << destino << "." << endl;
+
+            ifstream leerSol("solicitudes.txt");
+            string lineaS;
+            string nuevoContenido = "";
+            bool solicitudYaExiste = false;
+            bool usuarioEncontrado = false;
+
+            while (getline(leerSol, lineaS)) {
+                string duenio = "";
+                int idx = 0;
+                while (lineaS[idx] != '|' && lineaS[idx] != '\0') {
+                    duenio += lineaS[idx++];
+                }
+
+                if (duenio == usuarioActivo) {
+                    usuarioEncontrado = true;
+
+                    if (lineaS.find(destino) != string::npos) {
+                        solicitudYaExiste = true;
+                        nuevoContenido += lineaS + "\n";
+                    } else {
+                        if (lineaS[lineaS.length() - 1] != '/') {
+                            lineaS += "/";
+                        }
+                        lineaS += destino + "/";
+                        nuevoContenido += lineaS + "\n";
+                    }
+                } else {
+                    nuevoContenido += lineaS + "\n";
+                }
+            }
+            leerSol.close();
+
+            if (solicitudYaExiste) {
+                cout << "\nYa has enviado una solicitud a " << destino << " o ya esta pendiente." << endl;
+            } else {
+                if (!usuarioEncontrado) {
+                    nuevoContenido += usuarioActivo + "|" + destino + "/\n";
+                }
+
+                ofstream escribirSol("solicitudes.txt");
+                escribirSol << nuevoContenido;
+                escribirSol.close();
+
+                cout << "Solicitud de amistad enviada a " << destino << "." << endl;
+            }
         }
     }
     else {

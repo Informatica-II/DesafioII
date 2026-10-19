@@ -41,6 +41,13 @@ void Plataforma::iniciar() {
                     GestorAmistades gestorRuleta;
                     gestorRuleta.mostrarRuletaFotos(string(usuarioActivo), iteraciones, memoria);
 
+                    int memoriaTotalSistema = memoria + sizeof(opcion) + sizeof(exito);
+
+                    cout << "\n--- REPORTE DE RENDIMIENTO ---" << endl;
+                    cout << "a. Iteraciones requeridas : " << iteraciones << " ciclos." << endl;
+                    cout << "b. Memoria consumida      : " << memoriaTotalSistema << " bytes." << endl;
+                    cout << "------------------------------\n" << endl;
+
                     menuInterno();
 
                     sesionIniciada = false;
@@ -49,13 +56,6 @@ void Plataforma::iniciar() {
                 else {
                     cout << "Usuario o contrasenia incorrectos." << endl;
                 }
-
-                int memoriaTotalSistema = memoria + sizeof(opcion) + sizeof(exito);
-
-                cout << "\n--- REPORTE DE RENDIMIENTO ---" << endl;
-                cout << "a. Iteraciones requeridas : " << iteraciones << " ciclos." << endl;
-                cout << "b. Memoria consumida      : " << memoriaTotalSistema << " bytes." << endl;
-                cout << "------------------------------\n" << endl;
                 break;
             }
             case 2:
