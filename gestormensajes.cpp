@@ -36,6 +36,22 @@ int GestorMensajes::convertirFechaEntero(const string& fechaStr, int& iteracione
     return valor;
 }
 
+string GestorMensajes::formatearFechaVisual(const string& fechaCruda, int& iteraciones, int& memoria) {
+    string fechaVisual = "";
+
+    for (int i = 0; fechaCruda[i] != '\0'; i++) {
+        iteraciones++;
+        fechaVisual += fechaCruda[i];
+
+        if (i == 3 || i == 5) {
+            fechaVisual += '/';
+        }
+    }
+
+    memoria += fechaVisual.length();
+    return fechaVisual;
+}
+
 void GestorMensajes::enviarMensaje(const string& emisor, const string& receptor, const string& mensaje, int& iteraciones, int& memoria) {
     string fecha = obtenerFechaActual();
 
@@ -138,7 +154,10 @@ void GestorMensajes::leerNuevosMensajes(const string& usuarioActivo, int& iterac
                 if (linea[i] == '^') i++;
 
                 if (estado == "0") {
-                    cout << "Fecha: " << fecha << " | De: " << emisor << "\n";
+
+                    string fechaElegante = formatearFechaVisual(fecha, iteraciones, memoria);
+
+                    cout << "Fecha: " << fechaElegante << " | De: " << emisor << "\n";
                     cout << "Mensaje: " << contenido << "\n";
                     cout << "---------------------------" << endl;
 
@@ -218,7 +237,8 @@ void GestorMensajes::buscarPorRango(const string& usuarioActivo, int fechaInicio
 
                 if (fechaMensaje >= fechaInicio && fechaMensaje <= fechaFin) {
                     string txtEstado = (estado == "1") ? "Leido" : "No leido";
-                    cout << "[" << fechaStr << "] " << emisor << " (" << txtEstado << "):\n" << contenido << "\n";
+                    string fechaElegante = formatearFechaVisual(fechaStr, iteraciones, memoria);
+                    cout << "[" << fechaElegante << "] " << emisor << " (" << txtEstado << "):\n" << contenido << "\n";
                     cout << "---------------------------" << endl;
                     mensajesEncontrados = true;
                 }
@@ -297,6 +317,13 @@ void GestorMensajes::administrar(const string& usuarioActivo, GestorAmistades& g
             break;
         default:
             cout << "Opcion no valida." << endl;
+        }
+
+        if (opcion >= 1 && opcion <= 3) {
+            cout << "\n--- METRICAS ---" << endl;
+            cout << "Iteraciones consumidas : " << iteraciones << " ciclos." << endl;
+            cout << "Memoria extra usada    : " << memoria << " bytes." << endl;
+            cout << "--------------------------------" << endl;
         }
 
         iteracionesGlobales += iteraciones;

@@ -38,6 +38,9 @@ void Plataforma::iniciar() {
                 if (exito) {
                     cout << "\nBienvenido a UdeaBook " << usuarioActivo << "." << endl;
 
+                    GestorAmistades gestorRuleta;
+                    gestorRuleta.mostrarRuletaFotos(string(usuarioActivo), iteraciones, memoria);
+
                     menuInterno();
 
                     sesionIniciada = false;
@@ -166,10 +169,9 @@ void Plataforma::menuInterno() {
         cout << "\n===============================" << endl;
         cout << "      Menu de opciones      " << endl;
         cout << "===============================" << endl;
-        cout << "1. Gestionar Amistades" << endl;
-        cout << "2. Gestionar Albumes" << endl;
-        cout << "3. Gestionar Mensajes" << endl;
-        cout << "4. Cerrar sesion" << endl;
+        cout << "1. Amistades" << endl;
+        cout << "2. Mensajes" << endl;
+        cout << "3. Cerrar sesion" << endl;
         cout << endl;
         cout << "Ingrese una opcion: ";
 
@@ -181,17 +183,13 @@ void Plataforma::menuInterno() {
                 cout << "\nEntrando a Gestor de Amistades..." << endl;
                 gestorAmigos.administrar(usuarioActivo, iteracionesGlobales, memoriaGlobal);
                 break;
-
             case 2:
-                cout << "\nEntrando a Gestor de Albumes..." << endl;
-                break;
-            case 3:
                 cout << "\nEntrando a Gestor de Mensajes..." << endl;
                 gestorMensajes.administrar(string(usuarioActivo), gestorAmigos, iteracionesGlobales, memoriaGlobal);
                 break;
-            case 4:
+            case 3:
                 cout << "\nCerrando sesion..." << endl;
-                cout << "--- RENDIMIENTO DE LA SESION ---" << endl;
+                cout << "--- METRICAS ---" << endl;
                 cout << "Iteraciones: " << iteracionesGlobales << endl;
                 cout << "Memoria extra: " << memoriaGlobal << " bytes" << endl;
                 cout << "--------------------------------" << endl;
@@ -200,7 +198,7 @@ void Plataforma::menuInterno() {
                 cout << "\nOpcion no valida." << endl;
                 break;
         }
-    } while (opcion != 4);
+    } while (opcion != 3);
 }
 
 Plataforma::~Plataforma() {}
