@@ -1,0 +1,4 @@
+juan|20000515~juan@udea.edu.co~/users/udea_data/juan/perfil.png~Medellin~Colombia~20260110
+maria|19991120~maria@udea.edu.co~/users/udea_data/maria/avatar.png~Bogota~Colombia~20260215
+pedro|20010308~pedro@udea.edu.co~/users/udea_data/pedro/foto.png~Cali~Colombia~20260320
+alex|19980722~alex@udea.edu.co~/users/udea_data/alex/pic.png~Medellin~Colombia~20260405

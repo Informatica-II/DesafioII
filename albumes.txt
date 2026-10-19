@@ -1,0 +1,2 @@
+juan|Cartagena2026~/users/udea_data/juan/albums/Cartagena2026~amigos^Oculto~/users/udea_data/juan/albums/Oculto~privado
+maria|Mascotas~/users/udea_data/maria/albums/Mascotas~publico^Graduacion~/users/udea_data/maria/albums/Graduacion~amigos

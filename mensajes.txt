@@ -1,0 +1,2 @@
+juan|maria~20261001~1~Hola Juan, como vas con el proyecto de C++?^pedro~20261015~1~Ey Juan, prestame tu Gestor de Amistades bro.^maria~20261016~1~Gracias juan^
+maria|juan~20261002~1~Hola Maria, ya casi lo termino, esta quedando un 5.0!^juan~20261016~1~HOLA maria ya avance mucho el desafio 2^
